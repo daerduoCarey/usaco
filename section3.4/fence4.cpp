@@ -6,56 +6,95 @@ TASK: fence4
 
 #include<iostream>
 #include<cstdio>
+#include<cmath>
+#include<algorithm>
 using namespace std;
+struct node
+{
+    int i,j;
+}ans[201];
+bool cmp(node a,node b)
+{
+    if(a.j<b.j||(a.j==b.j&&a.i<b.i)) return true;
+    else return false;
+}
 int n;
 int x[200]={0},y[200]={0};
-long long xx,yy;
-long long abs(long long x) {if(x<0) return -x; return x;}
-long long det(long long a1,long long a2,long long a3,long long a4)
+double xx,yy;
+double abs(double x) {if(x<0) return -x; return x;}
+double det(double a1,double a2,double a3,double a4)
 {
     return a1*a4-a2*a3;
 }
-bool cross(long long x1,long long y1,long long x2,long long y2,long long x3,long long y3,long long x4,long long y4)
+bool cross(double x1,double y1,double x2,double y2,double x3,double y3,double x4,double y4)
 {
-    //cout<<det(x2-x1,y2-y1,x3-x1,y3-y1)<<" "<<det(x2-x1,y2-y1,x4-x1,y4-y1)<<endl;
     if(det(x2-x1,y2-y1,x3-x1,y3-y1)*det(x2-x1,y2-y1,x4-x1,y4-y1)>0) return false;
     else
     {
         if(det(x2-x1,y2-y1,x3-x1,y3-y1)==0&&det(x2-x1,y2-y1,x4-x1,y4-y1)==0)
         {
-            long long minx=min(x1,x2),maxx=max(x1,x2);
+            double minx=min(x1,x2),maxx=max(x1,x2);
+            if(minx==maxx)
+            {
+                if((y3>max(y1,y2)&&y4>max(y1,y2))||(y3<max(y1,y2)&&y4<max(y1,y2))) return false;
+                else return true;
+            }
             if((x4>maxx&&x3>maxx)||(x3<minx&&x4<minx)) return false;
             else return true;
         }
         else if(det(x2-x1,y2-y1,x3-x1,y3-y1)==0)
         {
-            long long minx=min(x1,x2),maxx=max(x1,x2);
+            double minx=min(x1,x2),maxx=max(x1,x2);
+            if(minx==maxx)
+            {
+                if(y3>max(y1,y2)||y3<min(y1,y2)) return false;
+                else return false;
+            }
             if(x3>=minx&&x3<=maxx) return true;
         }
         else if(det(x2-x1,y2-y1,x4-x1,y4-y1)==0)
         {
-            long long minx=min(x1,x2),maxx=max(x1,x2);
+            double minx=min(x1,x2),maxx=max(x1,x2);
+            if(minx==maxx)
+            {
+                if(y4>max(y1,y2)||y4<min(y1,y2)) return false;
+                else return false;
+            }
             if(x4>=minx&&x4<=maxx) return true;
         }
     }
-    //cout<<det(x2-x1,y2-y1,x3-x1,y3-y1)<<" "<<det(x2-x1,y2-y1,x4-x1,y4-y1)<<endl;
     if(det(x4-x3,y4-y3,x1-x3,y1-y3)*det(x4-x3,y4-y3,x2-x3,y2-y3)>0) return false;
     else
     {
         if(det(x4-x3,y4-y3,x1-x3,y1-y3)==0&&det(x4-x3,y4-y3,x2-x3,y2-y3)==0)
         {
-            long long minx=min(x3,x4),maxx=max(x3,x4);
+            double minx=min(x3,x4),maxx=max(x3,x4);
+            if(minx==maxx)
+            {
+                if((y1>max(y3,y4)&&y2>max(y3,y4))||(y1<max(y3,y4)&&y2<max(y3,y4))) return false;
+                else return true;
+            }
             if((x1>maxx&&x2>maxx)||(x1<minx&&x2<minx)) return false;
             else return true;
         }
         else if(det(x4-x3,y4-y3,x1-x3,y1-y3)==0)
         {
-            long long minx=min(x3,x4),maxx=max(x3,x4);
+            double minx=min(x3,x4),maxx=max(x3,x4);
+            if(minx==maxx)
+            {
+                if(y1>max(y1,y2)||y1<min(y1,y2)) return false;
+                else return false;
+            }
             if(x1>=minx&&x1<=maxx) return true;
         }
         else if(det(x4-x3,y4-y3,x2-x3,y2-y3)==0)
         {
-            long long minx=min(x3,x4),maxx=max(x3,x4);
+            double minx=min(x3,x4),maxx=max(x3,x4);
+            if(minx==maxx)
+            {
+                if(y2>max(y1,y2)||y2<min(y1,y2)) return false;
+                else return false;
+            }
             if(x2>=minx&&x2<=maxx) return true;
         }
     }
@@ -65,13 +104,12 @@ bool check()
 {
     int f=1;
     for(int i=0;i<n;++i)
-        for(int j=0;j<n;++j)
+        for(int j=0;j<n&&f;++j)
         {
-            //cout<<"@"<<i<<" "<<j<<endl;
-            //printf("(%d,%d) (%d,%d) (%d,%d) (%d,%d)\n",x[i],y[i],x[(i+1)%n],y[(i+1)%n],x[j],y[j],x[(j+1)%n],y[(j+1)%n]);
             if(i==j||i==(j+1)%n||j==(i+1)%n) continue;
             if(cross(x[i],y[i],x[(i+1)%n],y[(i+1)%n],x[j],y[j],x[(j+1)%n],y[(j+1)%n]))
             {
+                printf("%d %d %d %d %d %d %d %d \n",x[i],y[i],x[(i+1)%n],y[(i+1)%n],x[j],y[j],x[(j+1)%n],y[(j+1)%n]);
                 f=0;break;
             }
         }
@@ -90,31 +128,69 @@ int main()
         for(int j=0;j<n;++j)
         {
             int i=(j+n-1)%n;
-            int f1=1,f2=1;
-            for(int k=0;k<n;++k)
-                if(k!=i&&k!=(i+n-1)%n&&cross(xx,yy,x[i],y[i],x[k],y[k],x[(k+1)%n],y[(k+1)%n]))
-                    {f1=0;break;}
-            for(int k=0;k<n;++k)
-                if(k!=i&&k!=(i+1)%n&&cross(xx,yy,x[j],y[j],x[k],y[k],x[(k+1)%n],y[(k+1)%n]))
-                    {f2=0;break;}
-            if(f1||f2)
+            double k,b,f=0,len,st=0.001,maxx=max(x[i],x[j]);
+            len=sqrt((x[i]-x[j])*(x[i]-x[j])*1.0+(y[i]-y[j])*(y[i]-y[j]));
+            //printf("%d:(%d,%d)=>%d:(%d,%d)\n",i,x[i],y[i],j,x[j],y[j]);
+            if(x[j]==x[i]) f=1;
+            else
             {
-
-                ++tot;ansi[tot]=i;ansj[tot]=j;
-                if(i==n-1) {ansi[tot]=0;ansj[tot]=n-1;}
+                k=(y[j]-y[i])*1.0/(x[j]-x[i]);
+                b=y[i]-k*x[i];
+            }
+            if(!f){
+                double cx;
+                cx=min(x[i],x[j]);
+                cx+=st*len;
+                while(cx<maxx)
+                {
+                    double cy=k*cx+b;
+                    int fff=1;
+                    for(int jj=0;jj<n;++jj)
+                    {
+                        int ii=(jj+n-1)%n;
+                        if(ii!=i&&cross(cx,cy,xx,yy,x[ii],y[ii],x[jj],y[jj]))
+                        {
+                            fff=0;break;
+                        }
+                    }
+                    if(fff) break;
+                    cx+=st*len;
+                }
+                if(cx<maxx) {
+                    if(i==n-1) {++tot;ans[tot].i=0;ans[tot].j=n-1;}
+                    else {++tot;ans[tot].i=i;ans[tot].j=j;}
+                }
+            }
+            else
+            {
+                double cx=x[i],cy=min(y[i],y[j]),maxx=max(y[i],y[j]);
+                double len=maxx-cy,st=0.001;
+                cy+=st*len;
+                while(cy<maxx)
+                {
+                    int fff=1;
+                    for(int jj=0;jj<n;++jj)
+                    {
+                        int ii=(jj+n-1)%n;
+                        if(ii!=i&&cross(cx,cy,xx,yy,x[ii],y[ii],x[jj],y[jj]))
+                        {
+                            fff=0;break;
+                        }
+                    }
+                    if(fff) break;
+                    cy+=st*len;
+                }
+                if(cy<maxx) {
+                    if(i==n-1) {++tot;ans[tot].i=0;ans[tot].j=n-1;}
+                    else {++tot;ans[tot].i=i;ans[tot].j=j;}
+                }
             }
         }
         cout<<tot<<endl;
-        for(int i=1;i<tot;++i)
-            for(int j=1;j<i;++j)
-                if(ansj[i]<ansj[j])
-                {
-                    int tmp=ansi[i];ansi[i]=ansi[j];ansi[j]=tmp;
-                    tmp=ansj[i];ansj[i]=ansj[j];ansj[j]=tmp;
-                }
+        sort(ans+1,ans+tot+1,cmp);
         for(int i=1;i<=tot;++i)
         {
-            int tt=ansi[i],ttt=ansj[i];
+            int tt=ans[i].i,ttt=ans[i].j;
             cout<<x[tt]<<" "<<y[tt]<<" "<<x[ttt]<<" "<<y[ttt]<<endl;
         }
     }
